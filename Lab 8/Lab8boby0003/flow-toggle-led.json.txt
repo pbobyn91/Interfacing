@@ -1,0 +1,423 @@
+[
+    {
+        "id": "3aeecd62.fd65d2",
+        "type": "tab",
+        "label": "Tri-Colour LED (RGB)",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "d7aa0800.496c88",
+        "type": "comment",
+        "z": "3aeecd62.fd65d2",
+        "name": "Tri Colour LED (RGB) w/ PBS by Patrick Bobyn (boby0003@algonquincollege.com)",
+        "info": "Reference\n\nhttps://nodered.org/docs/hardware/arduino",
+        "x": 310,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "49670c3d.1be954",
+        "type": "comment",
+        "z": "3aeecd62.fd65d2",
+        "name": "Pre-Req: Teensy is running Standard Firmata Plus",
+        "info": "",
+        "x": 210,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "3e1929e5.251906",
+        "type": "comment",
+        "z": "3aeecd62.fd65d2",
+        "name": "Cycle R > G > B > R ... on the push button switch [RGB: button]",
+        "info": "",
+        "x": 250,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "69310628.cf8648",
+        "type": "arduino in",
+        "z": "3aeecd62.fd65d2",
+        "name": "Pushbutton (Pin 1)",
+        "pin": "1",
+        "state": "INPUT",
+        "arduino": "2a4d09aa.adba46",
+        "x": 120,
+        "y": 220,
+        "wires": [
+            [
+                "fce21fc3.613ff"
+            ]
+        ]
+    },
+    {
+        "id": "fce21fc3.613ff",
+        "type": "debounce",
+        "z": "3aeecd62.fd65d2",
+        "time": "500",
+        "name": "Debounce (500 ms)",
+        "x": 370,
+        "y": 220,
+        "wires": [
+            [
+                "33eb19f8.898b56"
+            ]
+        ]
+    },
+    {
+        "id": "33eb19f8.898b56",
+        "type": "function",
+        "z": "3aeecd62.fd65d2",
+        "name": "Cycle Button Click: 1, 2, 3, 1",
+        "func": "var rgbState = 0;\n\n//assign rgb value\nvar clickCount = flow.get(\"rgbState\")|| 0 ;\n\n\n//increment rgb value\nclickCount++;\n\n//if count is over 4 reset counter\nif(clickCount === 4){ \n    clickCount =1;\n}\n\n//remember counter value\nflow.set(\"rgbState\",clickCount);\n\n//set message to click counter\nmsg.payload = clickCount;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 290,
+        "y": 300,
+        "wires": [
+            [
+                "6731a065.61109",
+                "195a968a.66a229"
+            ]
+        ]
+    },
+    {
+        "id": "6731a065.61109",
+        "type": "debug",
+        "z": "3aeecd62.fd65d2",
+        "name": "Click Count is:",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 450,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "ebf551db.23e65",
+        "type": "comment",
+        "z": "3aeecd62.fd65d2",
+        "name": "//Debug",
+        "info": "",
+        "x": 470,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "195a968a.66a229",
+        "type": "switch",
+        "z": "3aeecd62.fd65d2",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "1",
+                "vt": "num"
+            },
+            {
+                "t": "eq",
+                "v": "2",
+                "vt": "num"
+            },
+            {
+                "t": "eq",
+                "v": "3",
+                "vt": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 3,
+        "x": 560,
+        "y": 300,
+        "wires": [
+            [
+                "ef6a2a77.f9c6f8",
+                "b03544f5.ec8f78",
+                "fd27ba01.562c78"
+            ],
+            [
+                "1648de93.1877f1",
+                "827c6aa.3021d98",
+                "fd27ba01.562c78"
+            ],
+            [
+                "ff52b7ef.badae8",
+                "827c6aa.3021d98",
+                "b03544f5.ec8f78"
+            ]
+        ]
+    },
+    {
+        "id": "ef6a2a77.f9c6f8",
+        "type": "change",
+        "z": "3aeecd62.fd65d2",
+        "name": "Red On",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "1",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 760,
+        "y": 180,
+        "wires": [
+            [
+                "ffcfae9.09f825",
+                "c5c935d7.144c98"
+            ]
+        ]
+    },
+    {
+        "id": "827c6aa.3021d98",
+        "type": "change",
+        "z": "3aeecd62.fd65d2",
+        "name": "Red Off",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "0",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 760,
+        "y": 220,
+        "wires": [
+            [
+                "ffcfae9.09f825",
+                "c5c935d7.144c98"
+            ]
+        ]
+    },
+    {
+        "id": "ffcfae9.09f825",
+        "type": "debug",
+        "z": "3aeecd62.fd65d2",
+        "name": "Red",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 910,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "c5c935d7.144c98",
+        "type": "arduino out",
+        "z": "3aeecd62.fd65d2",
+        "name": "Red Out",
+        "pin": "4",
+        "state": "OUTPUT",
+        "arduino": "2a4d09aa.adba46",
+        "x": 920,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "b03544f5.ec8f78",
+        "type": "change",
+        "z": "3aeecd62.fd65d2",
+        "name": "Green Off",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "0",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 760,
+        "y": 340,
+        "wires": [
+            [
+                "48900997.a86fe8",
+                "c6737faf.f0be1"
+            ]
+        ]
+    },
+    {
+        "id": "1648de93.1877f1",
+        "type": "change",
+        "z": "3aeecd62.fd65d2",
+        "name": "Green On",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "1",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 760,
+        "y": 300,
+        "wires": [
+            [
+                "48900997.a86fe8",
+                "c6737faf.f0be1"
+            ]
+        ]
+    },
+    {
+        "id": "48900997.a86fe8",
+        "type": "debug",
+        "z": "3aeecd62.fd65d2",
+        "name": "Green",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 910,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "c6737faf.f0be1",
+        "type": "arduino out",
+        "z": "3aeecd62.fd65d2",
+        "name": "Green Out",
+        "pin": "5",
+        "state": "OUTPUT",
+        "arduino": "2a4d09aa.adba46",
+        "x": 930,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "ff52b7ef.badae8",
+        "type": "change",
+        "z": "3aeecd62.fd65d2",
+        "name": "Blue On",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "1",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 760,
+        "y": 420,
+        "wires": [
+            [
+                "61cba827.9bec18",
+                "643b07f6.2628e8"
+            ]
+        ]
+    },
+    {
+        "id": "fd27ba01.562c78",
+        "type": "change",
+        "z": "3aeecd62.fd65d2",
+        "name": "Blue Off",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "0",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 760,
+        "y": 460,
+        "wires": [
+            [
+                "61cba827.9bec18",
+                "643b07f6.2628e8"
+            ]
+        ]
+    },
+    {
+        "id": "61cba827.9bec18",
+        "type": "debug",
+        "z": "3aeecd62.fd65d2",
+        "name": "Blue",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 910,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "643b07f6.2628e8",
+        "type": "arduino out",
+        "z": "3aeecd62.fd65d2",
+        "name": "Blue Out",
+        "pin": "10",
+        "state": "OUTPUT",
+        "arduino": "2a4d09aa.adba46",
+        "x": 920,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "2e29c10f.3326ee",
+        "type": "comment",
+        "z": "3aeecd62.fd65d2",
+        "name": "DIgital Pins for R, G, B",
+        "info": "",
+        "x": 800,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "2a4d09aa.adba46",
+        "type": "arduino-board",
+        "z": "",
+        "device": "COM4"
+    }
+]

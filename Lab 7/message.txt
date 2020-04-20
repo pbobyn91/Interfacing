@@ -1,0 +1,71 @@
+#include "notes.h"
+const int tonePin = 12;//tone pin
+const int LEDPin = 19;//LED pin
+const int sensorPin = A0;//SENSOR pin (not in use) 
+const int touchPin = 1;//touch pin (Cap sensor)
+boolean sensorGate = true;//Sensor gate not really in use
+
+//notes used for the melody
+int melody[] = {
+  NOTE_C4, NOTE_G3, NOTE_G3, NOTE_A3, NOTE_G3, 0, NOTE_B3, NOTE_C4
+};
+//note duration, 4 is 1/4 note and 8 is 1/8 note
+int noteDurations[] = {
+  4, 8, 8, 4, 4, 4, 4, 4
+};
+/*
+ * Setup function, assign pinMode Output to LED
+*/
+void setup() {
+  pinMode(LEDPin,OUTPUT);
+}
+/*
+ * Function used to return a tone value to be used in the tone(pin,freq,duration) function
+*/
+int tone_value(){
+  float sinVal;//sin value 
+  int toneVal;// tone value
+  
+    for(int x =0 ; x<180; x++){
+      sinVal = (sin(x*(3.1412/180)));
+      toneVal=2000+(int(sinVal*1000));
+     //0 delay(2); 
+    }
+   return toneVal;
+}
+/*
+ * Function used to perform a melody when the user clicks on the cap sensor
+*/
+void notes(){
+  //Loop playing the notes of the melody 8 iterations
+  //
+    for (int i = 0; i < 8; i++) {
+      int noteDuration = 1000 / noteDurations[i];//calculate note durantion
+      tone(tonePin, melody[i], noteDuration);//play note
+      int pauseBetweenNotes = noteDuration * 1.30;//set minimum times between notes, 30%
+      delay(pauseBetweenNotes);//delay between notes
+      noTone(tonePin); // stop the tone playing:
+    }
+}
+/*
+ * Required Infinite loop function
+*/
+void loop() {
+  
+  //get the touch read value if it is over 2000, the user is touching else user is not touching
+  long cs1_value = touchRead(touchPin);
+  //check if the sensor gate is true
+  if(sensorGate){//maybe use to add other functions when sensor is off (Future use)
+    if(cs1_value > 2000){//check if value is greater than 2000(user is touching) 
+      digitalWrite(LEDPin,HIGH);//turn on LED
+      Serial.println(cs1_value);//print value to Serial
+      //tone(tonePin,100/*tone_value()*/);//no in use
+      notes();//play melody while keeping LED on
+    }else{
+      Serial.println(cs1_value);
+      digitalWrite(LEDPin,LOW); //LED off
+      noTone(tonePin);//no sound
+    }
+   } 
+ delay(500);
+}

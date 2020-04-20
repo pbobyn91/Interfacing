@@ -1,0 +1,222 @@
+[
+    {
+        "id": "16f4b624.f72caa",
+        "type": "tab",
+        "label": "Temperature RESTful API (localhost)",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "f459b1be.369a5",
+        "type": "comment",
+        "z": "16f4b624.f72caa",
+        "name": "Temperature RESTful API by Patrick Bobyn (boby0003@algonquinlive.com)",
+        "info": "",
+        "x": 280,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "4b36f1c1.c8fcf",
+        "type": "comment",
+        "z": "16f4b624.f72caa",
+        "name": "Pre-Req: Teensy is running Standard Firmata Plus",
+        "info": "",
+        "x": 210,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "5c37c031.7959b",
+        "type": "comment",
+        "z": "16f4b624.f72caa",
+        "name": "Read Thermistor, convert to C and cache Temperature (C)",
+        "info": "",
+        "x": 230,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "753a1188.25105",
+        "type": "arduino in",
+        "z": "16f4b624.f72caa",
+        "name": "Thermistor (A1)",
+        "pin": "1",
+        "state": "ANALOG",
+        "arduino": "c570cd2f.9a56e",
+        "x": 100,
+        "y": 180,
+        "wires": [
+            [
+                "41b51c12.0c85c4"
+            ]
+        ]
+    },
+    {
+        "id": "41b51c12.0c85c4",
+        "type": "function",
+        "z": "16f4b624.f72caa",
+        "name": "Convert Pin(A1) to Celsius",
+        "func": "var val = msg.payload || 0;\nvar celcius = (25 + (val - 512) / 11.3);\n\ncelcius = Math.round(celcius*10)/10;\nmsg.payload = celcius;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 340,
+        "y": 180,
+        "wires": [
+            [
+                "d1559e93.bc36e"
+            ]
+        ]
+    },
+    {
+        "id": "d1559e93.bc36e",
+        "type": "function",
+        "z": "16f4b624.f72caa",
+        "name": "cache Temperature",
+        "func": "flow.set( 'TEMPERATURE', msg.payload );\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 590,
+        "y": 180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9111bfac.bfb3",
+        "type": "comment",
+        "z": "16f4b624.f72caa",
+        "name": "Get endpoint: /temperature/now",
+        "info": "",
+        "x": 150,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "f6e2564f.b11c38",
+        "type": "http in",
+        "z": "16f4b624.f72caa",
+        "name": "HTTP GET /temperature/now",
+        "url": "/temperature/now",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 150,
+        "y": 320,
+        "wires": [
+            [
+                "b626960f.f32cf8"
+            ]
+        ]
+    },
+    {
+        "id": "b626960f.f32cf8",
+        "type": "function",
+        "z": "16f4b624.f72caa",
+        "name": "get cached temperature",
+        "func": "// Get cached temperature\nvar temperatureNow = flow.get( 'TEMPERATURE' );\nmsg.payload = temperatureNow;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 170,
+        "y": 420,
+        "wires": [
+            [
+                "1363fbf9.72b2f4"
+            ]
+        ]
+    },
+    {
+        "id": "1363fbf9.72b2f4",
+        "type": "template",
+        "z": "16f4b624.f72caa",
+        "name": "to JSON",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n    \"temperature\": {{payload}}\n}",
+        "output": "json",
+        "x": 420,
+        "y": 320,
+        "wires": [
+            [
+                "410d103f.da0ae"
+            ]
+        ]
+    },
+    {
+        "id": "410d103f.da0ae",
+        "type": "function",
+        "z": "16f4b624.f72caa",
+        "name": "Append timestamp",
+        "func": "msg.payload.timestamp = new Date().toString();\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 550,
+        "y": 380,
+        "wires": [
+            [
+                "a4afe2d7.3739f",
+                "829314f4.881c48"
+            ]
+        ]
+    },
+    {
+        "id": "a4afe2d7.3739f",
+        "type": "function",
+        "z": "16f4b624.f72caa",
+        "name": "Set HTTP header to JSON",
+        "func": "// If sending JSON data the content type is:\nmsg.headers={\"Context-Type\":\"application/json\"}\n\n// For HTML use the content type line below:\n//msg.headers={\"Context-Type\":\"application/html\"}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 860,
+        "y": 320,
+        "wires": [
+            [
+                "30bea8b3.afb648"
+            ]
+        ]
+    },
+    {
+        "id": "30bea8b3.afb648",
+        "type": "http response",
+        "z": "16f4b624.f72caa",
+        "name": "HTTP Response",
+        "statusCode": "",
+        "headers": {},
+        "x": 1120,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "829314f4.881c48",
+        "type": "debug",
+        "z": "16f4b624.f72caa",
+        "name": "JSONata",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 800,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "17b664b0.d88fbb",
+        "type": "comment",
+        "z": "16f4b624.f72caa",
+        "name": "//DEBUG",
+        "info": "",
+        "x": 800,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "c570cd2f.9a56e",
+        "type": "arduino-board",
+        "z": "",
+        "device": "COM4"
+    }
+]

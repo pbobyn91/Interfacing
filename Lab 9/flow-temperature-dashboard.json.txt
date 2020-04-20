@@ -1,0 +1,324 @@
+[
+    {
+        "id": "df7ec007.b919b",
+        "type": "tab",
+        "label": "Temperature Dashboard",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "7fa48d4a.c6dc44",
+        "type": "comment",
+        "z": "df7ec007.b919b",
+        "name": "Temperature Dashboard by Patrick Bobyn (boby0003@algonquinlive.com)",
+        "info": "",
+        "x": 280,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "eac61707.1b4fa8",
+        "type": "comment",
+        "z": "df7ec007.b919b",
+        "name": "Pre-Req: Teensy is running Standard Firmata Plus",
+        "info": "",
+        "x": 210,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "1a8cc942.33d9b7",
+        "type": "arduino in",
+        "z": "df7ec007.b919b",
+        "name": "Thermistor (A0)",
+        "pin": "0",
+        "state": "ANALOG",
+        "arduino": "c570cd2f.9a56e",
+        "x": 100,
+        "y": 200,
+        "wires": [
+            [
+                "fedb4e75.6a41d"
+            ]
+        ]
+    },
+    {
+        "id": "956d1d09.24e3c",
+        "type": "comment",
+        "z": "df7ec007.b919b",
+        "name": "Temperature Circuit: https://www.pjrc.com/teensy/tutorial4.html",
+        "info": "",
+        "x": 240,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "8463cc17.805b4",
+        "type": "function",
+        "z": "df7ec007.b919b",
+        "name": "Convert Pin(A0) to Celsius",
+        "func": "var val = msg.payload || 0;\nvar celcius = (25 + (val - 512) / 11.3);\n\ncelcius = Math.round(celcius*10)/10;\nmsg.payload = celcius;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 520,
+        "y": 200,
+        "wires": [
+            [
+                "cb39b9b4.a38658",
+                "37762aa5.daa336",
+                "74f94306.91ed6c",
+                "b4df1a92.0a6d28"
+            ]
+        ]
+    },
+    {
+        "id": "cb39b9b4.a38658",
+        "type": "template",
+        "z": "df7ec007.b919b",
+        "name": "Template (C)",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "Temperature (C): {{payload}} ",
+        "output": "str",
+        "x": 850,
+        "y": 200,
+        "wires": [
+            [
+                "e06c818.8032f8"
+            ]
+        ]
+    },
+    {
+        "id": "e06c818.8032f8",
+        "type": "debug",
+        "z": "df7ec007.b919b",
+        "name": "Display: Temperature (C|F)",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 900,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "fedb4e75.6a41d",
+        "type": "delay",
+        "z": "df7ec007.b919b",
+        "name": "Delay 10s",
+        "pauseType": "rate",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "10",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": true,
+        "x": 280,
+        "y": 200,
+        "wires": [
+            [
+                "8463cc17.805b4"
+            ]
+        ]
+    },
+    {
+        "id": "37762aa5.daa336",
+        "type": "ui_gauge",
+        "z": "df7ec007.b919b",
+        "name": "Gauge: Temperature",
+        "group": "85adc86.dbb3e38",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Temperature",
+        "label": "Celcius",
+        "format": "{{value}° C",
+        "min": 0,
+        "max": "50",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "0",
+        "seg2": "50",
+        "x": 880,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "74f94306.91ed6c",
+        "type": "ui_chart",
+        "z": "df7ec007.b919b",
+        "name": "Graph: Temperature",
+        "group": "94012e65.2f80f",
+        "order": 0,
+        "width": "6",
+        "height": "9",
+        "label": "Temperature (&deg; C)",
+        "chartType": "line",
+        "legend": "true",
+        "xformat": "auto",
+        "interpolate": "linear",
+        "nodata": "Error - No Temperature!",
+        "dot": true,
+        "ymin": "15",
+        "ymax": "40",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "outputs": 1,
+        "x": 880,
+        "y": 420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b4df1a92.0a6d28",
+        "type": "ui_text",
+        "z": "df7ec007.b919b",
+        "group": "3e163aae.5f6826",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "name": "@author",
+        "label": "@author",
+        "format": "Patrick Bobyn (boby0003@algonquinlive.com)",
+        "layout": "row-left",
+        "x": 840,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "dfdbaa5.15e9058",
+        "type": "comment",
+        "z": "df7ec007.b919b",
+        "name": "//DEBUG",
+        "info": "",
+        "x": 1040,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "9e45c623.a012b8",
+        "type": "comment",
+        "z": "df7ec007.b919b",
+        "name": "To see Dashboard: URL base /ui",
+        "info": "",
+        "x": 910,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "e72e27c0.a888a8",
+        "type": "comment",
+        "z": "df7ec007.b919b",
+        "name": "Group: [Temperature] Gauge",
+        "info": "",
+        "x": 1140,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "3be93d56.3e3482",
+        "type": "comment",
+        "z": "df7ec007.b919b",
+        "name": "Group: [Temperature] Graph",
+        "info": "",
+        "x": 1140,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "a9cddfb9.8e6c8",
+        "type": "comment",
+        "z": "df7ec007.b919b",
+        "name": "Group: [About] Author",
+        "info": "",
+        "x": 1120,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "c570cd2f.9a56e",
+        "type": "arduino-board",
+        "z": "",
+        "device": "COM4"
+    },
+    {
+        "id": "85adc86.dbb3e38",
+        "type": "ui_group",
+        "z": "",
+        "name": "Gauge",
+        "tab": "8e790ae.561bbf8",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "94012e65.2f80f",
+        "type": "ui_group",
+        "z": "",
+        "name": "Graph",
+        "tab": "8e790ae.561bbf8",
+        "order": 2,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "3e163aae.5f6826",
+        "type": "ui_group",
+        "z": "",
+        "name": "Author",
+        "tab": "bbeb67f6.014708",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "8e790ae.561bbf8",
+        "type": "ui_tab",
+        "z": "",
+        "name": "Temperature",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "bbeb67f6.014708",
+        "type": "ui_tab",
+        "z": "",
+        "name": "About",
+        "icon": "dashboard",
+        "order": 2,
+        "disabled": false,
+        "hidden": false
+    }
+]

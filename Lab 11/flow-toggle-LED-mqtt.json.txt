@@ -1,0 +1,102 @@
+[
+    {
+        "id": "efe493c8.1f054",
+        "type": "tab",
+        "label": "Temperature (MQTT)",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "3efa5f97.06a14",
+        "type": "arduino in",
+        "z": "efe493c8.1f054",
+        "name": "Thermistor (A1)",
+        "pin": "1",
+        "state": "ANALOG",
+        "arduino": "c570cd2f.9a56e",
+        "x": 100,
+        "y": 120,
+        "wires": [
+            [
+                "5afdd551.7a7e2c"
+            ]
+        ]
+    },
+    {
+        "id": "5afdd551.7a7e2c",
+        "type": "function",
+        "z": "efe493c8.1f054",
+        "name": "Convert Pin(A1) to Celsius",
+        "func": "var val = msg.payload || 0;\nvar celcius = (25 + (val - 512) / 11.3);\n\ncelcius = Math.round(celcius*10)/10;\nmsg.payload = celcius;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 340,
+        "y": 120,
+        "wires": [
+            [
+                "92af1121.8f262"
+            ]
+        ]
+    },
+    {
+        "id": "cf98c557.6f6238",
+        "type": "comment",
+        "z": "efe493c8.1f054",
+        "name": "Temperature (MQTT) by Patrick Bobyn (boby0003algonquinlive.com)",
+        "info": "",
+        "x": 260,
+        "y": 20,
+        "wires": []
+    },
+    {
+        "id": "95b32002.1741e",
+        "type": "comment",
+        "z": "efe493c8.1f054",
+        "name": "Pre-Req: Teensy is running Standard Firmata Plus",
+        "info": "",
+        "x": 210,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "92af1121.8f262",
+        "type": "mqtt out",
+        "z": "efe493c8.1f054",
+        "name": "To MQTT Server (Cayenne): Channel 1",
+        "topic": "v1/c11cd460-7388-11ea-ba7c-716e7f5ba423/things/825ab1e0-73b8-11ea-8776-5598f921a7cc/data/1",
+        "qos": "1",
+        "retain": "",
+        "broker": "92f5ae92.20478",
+        "x": 700,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "c570cd2f.9a56e",
+        "type": "arduino-board",
+        "z": "",
+        "device": "COM4"
+    },
+    {
+        "id": "92f5ae92.20478",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "mqtt.mydevices.com",
+        "broker": "mqtt.mydevices.com",
+        "port": "1883",
+        "clientid": "825ab1e0-73b8-11ea-8776-5598f921a7cc",
+        "usetls": false,
+        "compatmode": true,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    }
+]
